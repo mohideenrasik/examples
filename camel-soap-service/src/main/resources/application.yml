@@ -1,0 +1,43 @@
+server:
+  servlet:
+      context-path: /
+  port: 8080
+  
+spring:
+  jmx:
+    enabled: true
+    
+camel:
+  springboot:
+    name: CamelApp
+  component:
+    servlet:
+      mapping:
+        contextPath: /api/*
+  rest:
+    component: servlet
+    enableCors: true
+    bindingMode: json
+    dataFormatProperty[prettyPrint]: true
+    apiContextPath: /api-doc
+    apiContextRouteId: ApiContext
+    apiProperty[api.title]: Camel App API
+    apiProperty[api.version]: 1.0.0
+
+management:
+  port: 8081
+  endpoints:
+    web:
+      exposure:
+        include: info,health,camelroutes,hawtio,jolokia
+      pathMapping:
+        hawtio: hawtio/console
+  endpoint:
+    health:
+      enabled: true
+    camelroutes:
+      enabled: true
+      read-only: true
+
+hawtio:
+  authenticationEnabled: false

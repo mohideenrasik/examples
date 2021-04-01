@@ -1,0 +1,28 @@
+<!DOCTYPE html>  
+<html xmlns:th="http://www.thymeleaf.org">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Secured Page</title>  
+</head>  
+<body>  
+    <h1>Secured Page</h1>  
+    <h3 th:inline="text">Hello, <span th:text="${#authentication.principal.attributes.name}"></span></h3>
+    
+     <table class="table table-striped">
+	        <thead>
+	        <tr>
+	            <th>Claim</th>
+	            <th>Value</th>
+	        </tr>
+	        </thead>
+	        <tbody>
+	        <tr th:each="item : ${details}">
+	            <td th:text="${item.key}">Key</td>
+	            <td th:id="${'claim-' + item.key}" th:text="${item.value}">Value</td>
+	        </tr>
+	        </tbody>
+	    </table>
+	    
+	    <a href="/logout">Logout</a>
+</body>  
+</html>

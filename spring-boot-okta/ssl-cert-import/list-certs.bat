@@ -1,0 +1,1 @@
+keytool -v -keystore "C:\Program Files\Java\jdk1.8.0_201\jre\lib\security\cacerts" -storepass changeit -list > jdk_certs.txt

@@ -1,0 +1,25 @@
+server:
+  servlet:
+      context-path: /
+  port: 8080
+
+okta:
+  oauth2: 
+    issuer: https://dev-15187891.okta.com/oauth2/default
+    client-id: 0oag00ta3P4Zhv4Tr5d6
+    client-secret: 1Dkko72KdauNRutE-pA25R_1L-VVokI54Zrnmsrh
+    postLogoutRedirectUri: http://localhost:8080/
+
+spring:
+  thymeleaf:
+    cache: false
+    
+camunda.bpm:
+  authorization:
+    enabled: true
+  admin-user:
+    id: demo
+    password: demo
+    firstName: Demo
+  filter:
+    create: All tasks

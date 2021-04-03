@@ -17,19 +17,22 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 public final class CamundaIdenityHelper {
 
 	private static final String CAMUNDA_GROUP_PREFIX = "camunda-";
-	private static final String CAMUNDA_ADMIN_GROUP_SUFFIX = "admin";
 	private static final String CAMUNDA_AUTO_CREATE_GROUP_SUFFIX = "auto-create";
 	
 	public static List<String> getAuthorities(Authentication authentication, ProcessEngine engine) {
+		//Camunda Cockpit app requires user profile to available in Camunda store
+		//Tasklist and Admin do not require the user profile to be present in camunda store
+		
+		final List<String> groupIds = new ArrayList<>();
 		if (autoCreateCamundaCredentials(authentication)) {
 			createCamundaUserIfNotExists(authentication, engine);
+			String userId = getUserId(authentication);
+			engine.getIdentityService().createGroupQuery().groupMember(userId).list()
+		            .forEach( g -> groupIds.add(g.getId()));
+		} else {
+			groupIds.addAll(getCamundaGroups(authentication));
 		}
-		
-		String userId = getUserId(authentication);
-		List<String> groupIds = new ArrayList<>();
-		engine.getIdentityService().createGroupQuery().groupMember(userId).list()
-	            .forEach( g -> groupIds.add(g.getId()));
-		return groupIds;
+		return groupIds;		
 	}
 	
 	private static boolean autoCreateCamundaCredentials(Authentication authentication) {
@@ -55,24 +58,23 @@ public final class CamundaIdenityHelper {
 		    identityService.saveUser(newUser);
 		}
 		
-		List<String> groups = authentication.getAuthorities().stream()
-				.map(res -> res.getAuthority())
-				.filter(res -> res.startsWith(CAMUNDA_GROUP_PREFIX))
-				.map(res -> res.substring(CAMUNDA_GROUP_PREFIX.length()))
-				.collect(Collectors.toList());
-		createCamundaGroupsForUser(engine, groups, userId);
+		createCamundaGroupsForUser(engine, getCamundaGroups(authentication), userId);
 	}
 	
+	private static List<String> getCamundaGroups(Authentication authentication) {
+		return authentication.getAuthorities().stream()
+				.map(res -> res.getAuthority())
+				.filter(res -> res.startsWith(CAMUNDA_GROUP_PREFIX))
+				.map(res -> res.equalsIgnoreCase(Groups.CAMUNDA_ADMIN) ? res : res.substring(CAMUNDA_GROUP_PREFIX.length()))
+				.collect(Collectors.toList()); 
+	}
+
 	private static void createCamundaGroupsForUser(ProcessEngine engine, List<String> groups, String userId) {
 		IdentityService identityService = engine.getIdentityService();
 		for (String group: groups) {
 			if (group.equalsIgnoreCase(CAMUNDA_AUTO_CREATE_GROUP_SUFFIX)) {
 				continue;
 			}
-			
-			if (group.equalsIgnoreCase(CAMUNDA_ADMIN_GROUP_SUFFIX)) {
-				group = Groups.CAMUNDA_ADMIN;
-			} 
 			
 			Group camundaGroup = identityService.createGroupQuery().groupId(group).singleResult();
 			if (null == camundaGroup) {

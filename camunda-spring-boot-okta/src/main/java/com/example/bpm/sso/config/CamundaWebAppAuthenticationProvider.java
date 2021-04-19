@@ -23,7 +23,7 @@ public class CamundaWebAppAuthenticationProvider extends ContainerBasedAuthentic
 			return AuthenticationResult.unsuccessful();
 		}
 		
-		AuthenticationResult result = new AuthenticationResult(CamundaIdenityHelper.getUserId(authentication), true);
+		AuthenticationResult result = new AuthenticationResult(CamundaIdenityHelper.getUserName(authentication), true);
 		result.setGroups(CamundaIdenityHelper.getAuthorities(authentication, engine));
 		return result;
 	}

@@ -18,8 +18,8 @@ camunda.bpm:
   authorization:
     enabled: true
   admin-user:
-    id: demo
+    id: admin
     password: demo
-    firstName: Demo
+    firstName: DefaultAdmin
   filter:
     create: All tasks

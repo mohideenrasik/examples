@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" id="DataValidation" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <decision id="DataValidationTable" name="DataValidationDecisions">
+    <decisionTable id="DecisionTable_0f9dyi5" hitPolicy="COLLECT" biodi:annotationsWidth="400">
+      <input id="Input_1" label="isValid" biodi:width="408">
+        <inputExpression id="InputExpression_1" typeRef="boolean">
+          <text>true</text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Field Name" name="fieldName" typeRef="string" />
+      <output id="OutputClause_13g9jm2" label="Reason" name="reason" typeRef="string" />
+      <rule id="DecisionRule_0jxro6j">
+        <inputEntry id="UnaryTests_1vw87sw" expressionLanguage="feel">
+          <text>(name = null or name = "")</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_071l7ni">
+          <text>"name"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1oqtupn">
+          <text>"EMPTY"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1r3g1uo">
+        <inputEntry id="UnaryTests_1p2q7o4">
+          <text>(string length(name) &lt; 3 or string length(name) &gt; 15)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0ciuboa">
+          <text>"name"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_04n2iax">
+          <text>"INVALID"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_00arl3q">
+        <inputEntry id="UnaryTests_0172rk7">
+          <text>(email = null or email = "")</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0kkp0j1">
+          <text>"email"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0658efb">
+          <text>"EMPTY"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0jyfc1v">
+        <inputEntry id="UnaryTests_0zdx43w">
+          <text>(not(matches(email, "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$")))</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_18v92eb">
+          <text>"email"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0iow20n">
+          <text>"INVALID"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1ptd78t">
+        <inputEntry id="UnaryTests_09y1uyb">
+          <text>(age = null)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0okwnwi">
+          <text>"age"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1qatklq">
+          <text>"EMPTY"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0o9pp7e">
+        <inputEntry id="UnaryTests_1qjhsbz">
+          <text>(age &lt; 1 or age &gt; 100)</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0emh2gw">
+          <text>"age"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1844o38">
+          <text>"INVALID"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="DataValidationTable">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

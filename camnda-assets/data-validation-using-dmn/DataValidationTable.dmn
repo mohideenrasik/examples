@@ -2,16 +2,17 @@
 <definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" id="DataValidation" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
   <decision id="DataValidationTable" name="DataValidationDecisions">
     <decisionTable id="DecisionTable_0f9dyi5" hitPolicy="COLLECT" biodi:annotationsWidth="400">
-      <input id="Input_1" label="isValid" biodi:width="408">
+      <input id="Input_1" label="Invalid When" biodi:width="501">
         <inputExpression id="InputExpression_1" typeRef="boolean">
           <text>true</text>
         </inputExpression>
       </input>
-      <output id="Output_1" label="Field Name" name="fieldName" typeRef="string" />
-      <output id="OutputClause_13g9jm2" label="Reason" name="reason" typeRef="string" />
+      <output id="Output_1" label="Field Name" name="fieldName" typeRef="string" biodi:width="150" />
+      <output id="OutputClause_13g9jm2" label="Reason" name="reason" typeRef="string" biodi:width="150" />
       <rule id="DecisionRule_0jxro6j">
+        <description>Name must have a value</description>
         <inputEntry id="UnaryTests_1vw87sw" expressionLanguage="feel">
-          <text>(name = null or name = "")</text>
+          <text>(request.name = null or request.name = "")</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_071l7ni">
           <text>"name"</text>
@@ -21,8 +22,9 @@
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1r3g1uo">
+        <description>No. of characters in name must be between 3 and 15</description>
         <inputEntry id="UnaryTests_1p2q7o4">
-          <text>(string length(name) &lt; 3 or string length(name) &gt; 15)</text>
+          <text>(string length(request.name) between &lt; 3 or string length(request.name) &gt; 15)</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0ciuboa">
           <text>"name"</text>
@@ -32,8 +34,9 @@
         </outputEntry>
       </rule>
       <rule id="DecisionRule_00arl3q">
+        <description>Email must have a value</description>
         <inputEntry id="UnaryTests_0172rk7">
-          <text>(email = null or email = "")</text>
+          <text>(request.email = null or request.email = "")</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0kkp0j1">
           <text>"email"</text>
@@ -43,8 +46,9 @@
         </outputEntry>
       </rule>
       <rule id="DecisionRule_0jyfc1v">
+        <description>Email must match the Regex format</description>
         <inputEntry id="UnaryTests_0zdx43w">
-          <text>(not(matches(email, "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$")))</text>
+          <text>(not(matches(request.email, "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$")))</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_18v92eb">
           <text>"email"</text>
@@ -54,8 +58,9 @@
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1ptd78t">
+        <description>Age must have a value</description>
         <inputEntry id="UnaryTests_09y1uyb">
-          <text>(age = null)</text>
+          <text>(request.age = null)</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0okwnwi">
           <text>"age"</text>
@@ -65,8 +70,9 @@
         </outputEntry>
       </rule>
       <rule id="DecisionRule_0o9pp7e">
+        <description>Age must be between 1 and 100</description>
         <inputEntry id="UnaryTests_1qjhsbz">
-          <text>(age &lt; 1 or age &gt; 100)</text>
+          <text>(request.age &lt; 1 or request.age &gt; 100)</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0emh2gw">
           <text>"age"</text>

@@ -24,7 +24,7 @@
       <rule id="DecisionRule_1r3g1uo">
         <description>No. of characters in name must be between 3 and 15</description>
         <inputEntry id="UnaryTests_1p2q7o4">
-          <text>(string length(request.name) between &lt; 3 or string length(request.name) &gt; 15)</text>
+          <text>(string length(request.name) &lt; 3 or string length(request.name) &gt; 15)</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0ciuboa">
           <text>"name"</text>

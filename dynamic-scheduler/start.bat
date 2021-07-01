@@ -1,0 +1,1 @@
+mvnw clean liquibase:update spring-boot:run

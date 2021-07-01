@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0gy61j8" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <bpmn:process id="GEH_INITIATE_PAYMENT" name="Initiate Paymet Process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0458gas</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0458gas" sourceRef="StartEvent_1" targetRef="PrintProcessName" />
+    <bpmn:sequenceFlow id="Flow_0rtyp82" sourceRef="PrintProcessName" targetRef="ThrowError" />
+    <bpmn:endEvent id="Event_1fpxh3l">
+      <bpmn:incoming>Flow_1jfoud0</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1jfoud0" sourceRef="ThrowError" targetRef="Event_1fpxh3l" />
+    <bpmn:scriptTask id="PrintProcessName" name="Print Process Details" scriptFormat="javascript">
+      <bpmn:incoming>Flow_0458gas</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rtyp82</bpmn:outgoing>
+      <bpmn:script>var system = java.lang.System;
+system.out.println('------ Inititate Payment Folw started -----');</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="ThrowError" name="Throw Technical Error" scriptFormat="javascript">
+      <bpmn:incoming>Flow_0rtyp82</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jfoud0</bpmn:outgoing>
+      <bpmn:script>throw new java.lang.RuntimeException('A technical error in Initiate payment Flow occurred');</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmn:error id="Error_1xdqwnr" name="java.lang.Exception" errorCode="java.lang.Exception" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="GEH_INITIATE_PAYMENT">
+      <bpmndi:BPMNEdge id="Flow_0458gas_di" bpmnElement="Flow_0458gas">
+        <di:waypoint x="188" y="117" />
+        <di:waypoint x="260" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rtyp82_di" bpmnElement="Flow_0rtyp82">
+        <di:waypoint x="360" y="117" />
+        <di:waypoint x="450" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jfoud0_di" bpmnElement="Flow_1jfoud0">
+        <di:waypoint x="550" y="117" />
+        <di:waypoint x="652" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fpxh3l_di" bpmnElement="Event_1fpxh3l">
+        <dc:Bounds x="652" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ivj7de_di" bpmnElement="PrintProcessName">
+        <dc:Bounds x="260" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1rs4yp3_di" bpmnElement="ThrowError">
+        <dc:Bounds x="450" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

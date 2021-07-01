@@ -6,3 +6,4 @@ This application demonstrate the below items
 * Auto trigger the process instance upon server startup
 * Model for reusable Java delegates
 * Exception handling in Workflow  
+* Data Validation implementation using DMN

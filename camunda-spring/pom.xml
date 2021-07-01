@@ -43,7 +43,7 @@
 			<artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
 			<version>${camunda.spring-boot.version}</version>
 		</dependency>
-		
+				
 		<!-- Spring Boot Support -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

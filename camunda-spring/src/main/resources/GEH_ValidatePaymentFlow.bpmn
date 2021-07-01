@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1aisyuh" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <bpmn:process id="GEH_VALIDATE_PAYMENT" name="Validate Payment Process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1cf8lh8</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1cf8lh8" sourceRef="StartEvent_1" targetRef="PrintProcessDetails" />
+    <bpmn:scriptTask id="PrintProcessDetails" name="Print Process Details" scriptFormat="javascript">
+      <bpmn:incoming>Flow_1cf8lh8</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wrlrzt</bpmn:outgoing>
+      <bpmn:script>var system = java.lang.System;
+system.out.println('------ Validate Payment Folw started -----');</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1wrlrzt" sourceRef="PrintProcessDetails" targetRef="ThrowBusinessError" />
+    <bpmn:scriptTask id="ThrowBusinessError" name="Throw Business Error" scriptFormat="javascript">
+      <bpmn:incoming>Flow_1wrlrzt</bpmn:incoming>
+      <bpmn:outgoing>Flow_07q2jml</bpmn:outgoing>
+      <bpmn:script>throw new org.camunda.bpm.engine.delegate.BpmnError('ACCOUNT_CHECK_FAILED', 'Target Account Not Present');</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="Event_155aics">
+      <bpmn:incoming>Flow_07q2jml</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_07q2jml" sourceRef="ThrowBusinessError" targetRef="Event_155aics" />
+    <bpmn:subProcess id="Activity_0zd9w4w" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_1bfzq0o">
+        <bpmn:outgoing>Flow_18kpjuy</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_1gamh4g" errorRef="Error_044mk6z" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_0dcyr8w">
+        <bpmn:incoming>Flow_1bypgqp</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_1bypgqp" sourceRef="HandleAccountError" targetRef="Event_0dcyr8w" />
+      <bpmn:scriptTask id="HandleAccountError" name="Handle AccountCheck Error" scriptFormat="javascript">
+        <bpmn:incoming>Flow_18kpjuy</bpmn:incoming>
+        <bpmn:outgoing>Flow_1bypgqp</bpmn:outgoing>
+        <bpmn:script>var system = java.lang.System;
+system.out.println('Account check failed exception handled inside the validate process');
+system.out.println('----' + execution.getVariable('errorCode') + ' : ' + execution.getVariable('errorMessage'));</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="Flow_18kpjuy" sourceRef="Event_1bfzq0o" targetRef="HandleAccountError" />
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmn:error id="Error_044mk6z" name="ACCOUNT_CHECK_FAILED" errorCode="ACCOUNT_CHECK_FAILED" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="GEH_VALIDATE_PAYMENT">
+      <bpmndi:BPMNEdge id="Flow_1cf8lh8_di" bpmnElement="Flow_1cf8lh8">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="308" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wrlrzt_di" bpmnElement="Flow_1wrlrzt">
+        <di:waypoint x="408" y="117" />
+        <di:waypoint x="500" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07q2jml_di" bpmnElement="Flow_07q2jml">
+        <di:waypoint x="600" y="117" />
+        <di:waypoint x="672" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dlg4jv_di" bpmnElement="ThrowBusinessError">
+        <dc:Bounds x="500" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_155aics_di" bpmnElement="Event_155aics">
+        <dc:Bounds x="672" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0r0d3fs_di" bpmnElement="PrintProcessDetails">
+        <dc:Bounds x="308" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0b6cfos_di" bpmnElement="Activity_0zd9w4w" isExpanded="true">
+        <dc:Bounds x="160" y="260" width="522" height="150" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1bypgqp_di" bpmnElement="Flow_1bypgqp">
+        <di:waypoint x="460" y="330" />
+        <di:waypoint x="582" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18kpjuy_di" bpmnElement="Flow_18kpjuy">
+        <di:waypoint x="248" y="330" />
+        <di:waypoint x="360" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0qu9ffl_di" bpmnElement="Event_1bfzq0o">
+        <dc:Bounds x="212" y="312" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1id5ger_di" bpmnElement="HandleAccountError">
+        <dc:Bounds x="360" y="290" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0dcyr8w_di" bpmnElement="Event_0dcyr8w">
+        <dc:Bounds x="582" y="312" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

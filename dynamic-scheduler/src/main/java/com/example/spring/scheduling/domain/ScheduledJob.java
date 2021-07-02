@@ -1,5 +1,7 @@
 package com.example.spring.scheduling.domain;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -18,5 +20,7 @@ public class ScheduledJob {
 	private String executionHandlerConfig;
 	private String schedule;
 	private boolean active;
+	private Timestamp startTimestamp;
+	private Timestamp endTimestamp;
 	private int version;
 }

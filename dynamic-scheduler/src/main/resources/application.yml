@@ -8,4 +8,7 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.sql
   
 scheduler:
+  threadPoolSize: 10
   pollingIntervalMins: 5
+  lockAtleastForSecs: 60
+  lockAtmostForSecs: 60

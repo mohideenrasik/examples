@@ -22,5 +22,7 @@ public class ScheduledJob {
 	private boolean active;
 	private Timestamp startTimestamp;
 	private Timestamp endTimestamp;
+	private Long lockAtleastForSecs;
+	private Long lockAtmostForSecs;
 	private int version;
 }

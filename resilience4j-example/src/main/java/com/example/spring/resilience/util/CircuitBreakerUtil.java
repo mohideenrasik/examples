@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.example.spring.resilience.config.ResilienceConfigurationMap;
-
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
@@ -20,7 +18,7 @@ import io.github.resilience4j.micrometer.tagged.TaggedCircuitBreakerMetrics;
 import io.micrometer.core.instrument.MeterRegistry;
 
 @Component
-public class CircuitBreakerUtil {
+public class CircuitBreakerUtil extends ResilienceUtil {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CircuitBreakerUtil.class);
 	
@@ -28,32 +26,40 @@ public class CircuitBreakerUtil {
 	
 	private CircuitBreakerRegistry circuitBreakerRegistry;
 	
-	@Autowired
-	private ResilienceConfigurationMap resilienceConfigurationMap;
-	
 	//Required only when you have metrics enabled in configuration
 	@Autowired
 	private MeterRegistry meterRegistry;
 
+	@Override
+	public String getResiliencePatternName() {
+		return "circuitBreaker";
+	}
+	
 	public <T> T executeWithCircuitBreaker(String key, Supplier<T> protectedMethod) {
 		return decorateWithCircuitBreaker(key, protectedMethod).get();
 	}
 	
 	public <T> T executeWithCircuitBreaker(String key, Supplier<T> protectedMethod, Supplier<T> fallback) {
-		try {
-			return decorateWithCircuitBreaker(key, protectedMethod).get();	
-		} catch (CallNotPermittedException e) {
-			return fallback.get();
-		}
+		return decorateWithCircuitBreaker(key, protectedMethod, fallback).get();	
 	}
 	
-	private <T> Supplier<T> decorateWithCircuitBreaker(String key, Supplier<T> protectedMethod) {
+	public <T> Supplier<T> decorateWithCircuitBreaker(String key, Supplier<T> protectedMethod) {
 		CircuitBreaker cb = circuitBreakersMap.computeIfAbsent(key, (k) -> buildCircuitBreaker(k));
 		Supplier<T> interjectedSupplier = () -> {
 			LOGGER.info("CircuitBreaker ({}) protected invocation happens on {}", cb.getName(), protectedMethod.toString());
 			return protectedMethod.get();
 		};
 		return cb.decorateSupplier(interjectedSupplier);
+	}
+	
+	public <T> Supplier<T> decorateWithCircuitBreaker(String key, Supplier<T> protectedMethod, Supplier<T> fallback) {
+		return () -> {
+			try {
+				return decorateWithCircuitBreaker(key, protectedMethod).get();	
+			} catch (CallNotPermittedException e) {
+				return fallback.get();
+			}
+		};
 	}
 	
 	private CircuitBreaker buildCircuitBreaker(String cbName) {
@@ -100,42 +106,5 @@ public class CircuitBreakerUtil {
 			    .recordExceptions(getThrowableConfiguration(cbName, "recordExceptions"))
 			    .ignoreExceptions(getThrowableConfiguration(cbName, "ignoreExceptions"))
 			    .build();
-	}
-	
-	private int getIntConfiguration(String cbName, String configName) {
-		return Integer.parseInt(getConfiguration(cbName, configName));
-	}
-	
-	@SuppressWarnings("unchecked")
-	private Class<? extends Throwable>[] getThrowableConfiguration(String cbName, String configName) {
-		try {
-			Class<? extends Throwable>[] exceptions = new Class[0];
-			String classNames = getConfiguration(cbName, configName);
-			if (null != classNames) {
-				String[] classes = classNames.split(",");
-				exceptions = new Class[classes.length];
-				int counter = -1;
-				for (String className: classes) {
-					exceptions[++counter] = (Class<? extends Throwable>) Class.forName(className.trim());
-				}
-			}
-			return exceptions;
-		} catch (Exception e) {
-			throw new RuntimeException("Invalid CircuitBreaker configurations:" + cbName + "." + configName, e);
-		}
-	}
-	
-	private String getConfiguration(String cbName, String configName) {
-		Map<String, Map<String, String>> circuitBreakerConfig = circuitBreakerConfig(resilienceConfigurationMap);
-		if (null != circuitBreakerConfig.get(cbName) && 
-				null != circuitBreakerConfig.get(cbName).get(configName)) {
-			return circuitBreakerConfig.get(cbName).get(configName);
-		} else {
-			return circuitBreakerConfig.get("default").get(configName);
-		}
-	}
-	
-	private Map<String, Map<String, String>> circuitBreakerConfig(ResilienceConfigurationMap config) {
-		return config.getResilience().get("circuitBreakers");
 	}
 }

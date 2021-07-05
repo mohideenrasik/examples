@@ -1,6 +1,6 @@
 
 resilience:
-  circuitBreakers:
+  circuitBreaker:
     default:
       failureRateThreshold: 50
       slowCallRateThreshold: 100
@@ -11,16 +11,18 @@ resilience:
       slidingWindowSize: 100
       minimumNumberOfCalls: 100
       waitDurationInOpenState: 60000
+      # recordExceptions: java.io.IOException, java.util.concurrent.TimeoutExceotion
+      # ignoreExceptions: com.example.BusinessException
       automaticTransitionFromOpenToHalfOpenEnabled: false
-      metricsEnabled: true
+      metricsEnabled: false
+    CB-Fail:
+      slidingWindowSize: 2
+      minimumNumberOfCalls: 2
 
-management:
-  metrics:
-    export:
-      atlas:
-        # The location of your Atlas server
-        uri: http://localhost:7101/api/v1/publish
-        # You will probably want to conditionally disable Atlas publishing in local development.
-        enabled: true
-        # The interval at which metrics are sent to Atlas. The default is 1 minute.
-        step: 10s
+  retry:
+    default:
+      maxAttempts: 3
+      waitDuration: 500
+      #retryExceptions: java.io.IOException, java.util.concurrent.TimeoutExceotion
+      #ignoreExceptions: com.example.BusinessException
+      failAfterMaxAttempts: true 

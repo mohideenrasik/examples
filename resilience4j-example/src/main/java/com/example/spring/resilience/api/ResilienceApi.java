@@ -22,13 +22,13 @@ public class ResilienceApi {
 	
 	@GetMapping("/success") 
 	public ResponseEntity<String> success() {
-		String result = cbUtil.executeWithCircuitBreaker("success", service::invokeGoogle, () -> "Google Not Reachable");
+		String result = cbUtil.executeWithCircuitBreaker("CB-Success", service::invokeGoogle, () -> "Google Not Reachable");
 		return new ResponseEntity<String>(result, HttpStatus.OK);
 	}
 	
 	@GetMapping("/fail") 
 	public ResponseEntity<String> fail() {
-		String result = cbUtil.executeWithCircuitBreaker("fail", service::alwaysFail, () -> "The method is failing");
+		String result = cbUtil.executeWithCircuitBreaker("CB-Fail", service::alwaysFail, () -> "The method is failing");
 		return new ResponseEntity<String>(result, HttpStatus.OK);
 	}
 }
